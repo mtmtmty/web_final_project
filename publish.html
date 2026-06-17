@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>发布动态 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/publish.css" />
+</head>
+<body>
+    <header class="navbar" id="app-navbar"></header>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="publish-container">
+                <div class="publish-card">
+                    <h2 class="publish-title" id="page-title">发布新动态</h2>
+
+                    <div class="publish-author" id="publish-author"></div>
+
+                    <textarea class="publish-textarea" id="post-content"
+                        placeholder="今天有什么想分享的？支持 #话题# 哦～" maxlength="500"></textarea>
+                    <div class="publish-counter"><span id="char-count">0</span> / 500</div>
+
+                    <div class="image-uploader" id="image-uploader"></div>
+                    <input type="file" id="image-file" accept="image/*" multiple style="display:none;" />
+
+                    <div class="form-group" style="margin-top:14px;">
+                        <label class="form-label">话题标签（每个 ≤10 字，最多 5 个）</label>
+                        <div class="tag-input-wrap" id="tag-wrap">
+                            <input type="text" class="tag-input" id="tag-input"
+                                   placeholder="输入后按回车添加，例如：校园日常" />
+                        </div>
+                    </div>
+
+                    <div class="publish-toolbar">
+                        <div class="publish-toolbar-wrap">
+                            <span class="publish-toolbar-item" id="emoji-trigger">😀 表情</span>
+                            <div class="emoji-picker" id="emoji-picker"></div>
+                        </div>
+                        <span class="publish-toolbar-item" id="image-trigger">🖼️ 图片</span>
+                        <span class="publish-toolbar-item" id="image-link-trigger">🔗 图片链接</span>
+
+                        <select class="visibility-select" id="visibility-select">
+                            <option value="public">🌐 公开</option>
+                            <option value="friends">👥 仅好友可见</option>
+                            <option value="private">🔒 仅自己可见</option>
+                        </select>
+
+                        <div class="publish-actions">
+                            <button class="btn btn-ghost" id="cancel-btn">取消</button>
+                            <button class="btn btn-primary" id="submit-btn">发布</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/publish.js"></script>
+    <script>UI.initPage('publish');</script>
+</body>
+</html>

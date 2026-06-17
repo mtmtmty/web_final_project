@@ -1,0 +1,203 @@
+/* ====== Profile Header ====== */
+.profile-header {
+    background: var(--color-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-cover {
+    height: 180px;
+    background: linear-gradient(135deg, #ff5277, #6c63ff);
+    position: relative;
+}
+
+.profile-cover::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.18), transparent 50%);
+}
+
+.profile-info {
+    padding: 0 28px 24px;
+    position: relative;
+}
+
+.profile-avatar-wrap {
+    margin-top: -52px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-card);
+    background: var(--color-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.profile-name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.profile-id {
+    font-size: 13px;
+    color: var(--color-text-light);
+}
+
+.profile-bio {
+    color: var(--color-text-light);
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.profile-stats {
+    display: flex;
+    gap: 30px;
+    margin: 12px 0;
+}
+
+.profile-stat-item {
+    cursor: pointer;
+}
+
+.profile-stat-num {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.profile-stat-label {
+    font-size: 12px;
+    color: var(--color-text-light);
+}
+
+.profile-tags {
+    margin-top: 10px;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.profile-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--color-text-light);
+    margin-top: 10px;
+}
+
+.profile-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* ====== Profile Tabs ====== */
+.profile-tabs {
+    display: flex;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    margin-bottom: 16px;
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+}
+
+.profile-tabs button {
+    padding: 8px 18px;
+    border-radius: var(--radius-md);
+    color: var(--color-text-light);
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.profile-tabs button.active {
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+}
+
+/* ====== Photo Wall ====== */
+.photo-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 6px;
+}
+
+.photo-wall img {
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    width: 100%;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: transform var(--transition);
+}
+
+.photo-wall img:hover {
+    transform: scale(1.03);
+}
+
+/* ====== Edit Profile Form ====== */
+.edit-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .edit-form .form-row { grid-template-columns: 1fr; }
+}
+
+/* ====== Followers list ====== */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--color-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.user-list-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-list-item .info { flex: 1; min-width: 0; }
+.user-list-item .name { font-weight: 600; font-size: 14px; }
+.user-list-item .bio { font-size: 12px; color: var(--color-text-light); margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

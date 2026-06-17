@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>私信 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <style>
+        .msg-layout { display:grid; grid-template-columns: 280px 1fr; gap:0; background:var(--color-card);
+            border-radius:var(--radius-lg); border:1px solid var(--color-border); overflow:hidden;
+            min-height: 70vh; box-shadow: var(--shadow-sm); }
+        @media(max-width:760px) { .msg-layout { grid-template-columns: 1fr; } .msg-side.hide-mobile { display:none; } }
+        .msg-side { border-right:1px solid var(--color-border); display:flex; flex-direction:column; }
+        .msg-side-header { padding:16px; border-bottom:1px solid var(--color-border); font-weight:600; }
+        .msg-conv-list { flex:1; overflow:auto; }
+        .msg-conv { display:flex; gap:10px; padding:12px 16px; cursor:pointer; align-items:center; border-bottom:1px solid var(--color-border); }
+        .msg-conv:hover, .msg-conv.active { background: var(--color-primary-soft); }
+        .msg-conv img { width:42px; height:42px; border-radius:50%; }
+        .msg-conv-info { flex:1; min-width:0; }
+        .msg-conv-name { font-size:14px; font-weight:600; }
+        .msg-conv-last { font-size:12px; color:var(--color-text-light); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .msg-conv-time { font-size:11px; color:var(--color-text-light); }
+        .msg-main { display:flex; flex-direction:column; }
+        .msg-main-header { padding:16px; border-bottom:1px solid var(--color-border); display:flex; align-items:center; gap:10px; font-weight:600; }
+        .msg-list { flex:1; overflow:auto; padding:16px; display:flex; flex-direction:column; gap:10px; background: var(--color-bg); }
+        .msg-bubble { max-width:65%; padding:10px 14px; border-radius:14px; font-size:14px; line-height:1.5;
+            background:var(--color-card); border:1px solid var(--color-border); word-break:break-word; }
+        .msg-bubble.mine { align-self:flex-end; background: var(--color-primary); color:#fff; border-color: var(--color-primary); }
+        .msg-time { font-size:11px; color:var(--color-text-light); align-self:center; margin: 4px 0; }
+        .msg-input-bar { display:flex; gap:8px; padding:12px; border-top:1px solid var(--color-border); background:var(--color-card); }
+        .msg-input-bar input { flex:1; padding:10px 14px; border-radius:var(--radius-pill); border:1px solid var(--color-border);
+            background:var(--color-bg); outline:none; }
+    </style>
+</head>
+<body>
+    <header class="navbar" id="app-navbar"></header>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <h2 style="margin-bottom:16px;">💬 私信消息</h2>
+            <div class="msg-layout">
+                <aside class="msg-side hide-mobile">
+                    <div class="msg-side-header">会话列表</div>
+                    <div class="msg-conv-list" id="conv-list"></div>
+                </aside>
+                <section class="msg-main" id="msg-main">
+                    <div class="empty-state" style="margin:auto;"><div class="emoji">💌</div>
+                        <div class="title">选择左侧会话开始聊天</div>
+                        <div class="desc">这是一个 UI 演示版的私信功能</div></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/messages.js"></script>
+    <script>UI.initPage('messages');</script>
+</body>
+</html>

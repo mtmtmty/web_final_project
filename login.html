@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>登录 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <div class="logo-icon">M</div>
+            <h1>欢迎回到 萌萌校园圈</h1>
+            <p>认识更多同校的小伙伴</p>
+        </div>
+
+        <div class="auth-tabs">
+            <a href="login.html" class="active">登录</a>
+            <a href="register.html">注册</a>
+        </div>
+
+        <form id="login-form" novalidate>
+            <div class="form-group">
+                <label class="form-label">学号</label>
+                <div class="input-with-icon">
+                    <span class="icon">🆔</span>
+                    <input type="text" name="studentId" class="form-control" placeholder="请输入学号 (如 20240101)" autocomplete="username" />
+                </div>
+                <div class="form-error" data-error-for="studentId"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">密码</label>
+                <div class="input-with-icon">
+                    <span class="icon">🔒</span>
+                    <input type="password" name="password" id="password-input" class="form-control" placeholder="请输入密码" autocomplete="current-password" />
+                    <span class="pwd-toggle" id="pwd-toggle">👁️</span>
+                </div>
+                <div class="form-error" data-error-for="password"></div>
+            </div>
+
+            <div class="auth-row">
+                <label class="checkbox-wrap"><input type="checkbox" name="remember" id="remember" />记住我</label>
+                <a href="javascript:void(0)" class="auth-link" id="forgot-link">忘记密码？</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">登录</button>
+
+            <div class="auth-bottom">
+                还没有账号？ <a href="register.html" class="auth-link">立即注册</a>
+                ｜ <a href="index.html" class="auth-link">游客浏览</a>
+            </div>
+
+            <div class="auth-bottom" style="font-size:11px;margin-top:24px;opacity:0.6;">
+                💡 演示账号：<br/>
+                管理员 20231001 / admin123 &nbsp;｜&nbsp; 普通用户 20240101 / 123456
+            </div>
+        </form>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        UI.applyTheme();
+        seedData();
+        Auth.initLogin();
+    </script>
+</body>
+</html>

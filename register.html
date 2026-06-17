@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>注册 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-page">
+    <div class="auth-card" style="max-width:520px;">
+        <div class="auth-logo">
+            <div class="logo-icon">M</div>
+            <h1>注册新账号</h1>
+            <p>加入校园圈，分享你的精彩瞬间</p>
+        </div>
+
+        <div class="auth-tabs">
+            <a href="login.html">登录</a>
+            <a href="register.html" class="active">注册</a>
+        </div>
+
+        <form id="register-form" novalidate>
+            <div class="form-group">
+                <label class="form-label">学号 *</label>
+                <div class="input-with-icon">
+                    <span class="icon">🆔</span>
+                    <input type="text" name="studentId" class="form-control" placeholder="8 位数字学号" maxlength="12" />
+                </div>
+                <div class="form-error" data-error-for="studentId"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">昵称 *</label>
+                <div class="input-with-icon">
+                    <span class="icon">👤</span>
+                    <input type="text" name="nickname" class="form-control" placeholder="2-12 个字符" maxlength="12" />
+                </div>
+                <div class="form-error" data-error-for="nickname"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">密码 *</label>
+                <div class="input-with-icon">
+                    <span class="icon">🔒</span>
+                    <input type="password" name="password" id="reg-password" class="form-control" placeholder="6-20 个字符，建议含字母与数字" />
+                    <span class="pwd-toggle" data-toggle="reg-password">👁️</span>
+                </div>
+                <div class="form-error" data-error-for="password"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">确认密码 *</label>
+                <div class="input-with-icon">
+                    <span class="icon">🔒</span>
+                    <input type="password" name="password2" id="reg-password2" class="form-control" placeholder="再次输入密码" />
+                    <span class="pwd-toggle" data-toggle="reg-password2">👁️</span>
+                </div>
+                <div class="form-error" data-error-for="password2"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">头像</label>
+                <div class="avatar-picker">
+                    <img id="reg-avatar-preview" src="" alt="avatar" />
+                    <div style="flex:1;">
+                        <div class="avatar-presets" id="avatar-presets"></div>
+                        <label style="display:inline-block;margin-top:8px;font-size:12px;color:var(--color-primary);cursor:pointer;">
+                            📷 上传本地图片
+                            <input type="file" id="avatar-file" accept="image/*" style="display:none;" />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">个人简介</label>
+                <textarea name="bio" class="form-control" rows="2" placeholder="一句话介绍下自己吧～" maxlength="80"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">兴趣标签（最多 6 个）</label>
+                <div class="tag-selector" id="tag-selector"></div>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-wrap">
+                    <input type="checkbox" id="agree" />我已阅读并同意《用户协议》《隐私政策》
+                </label>
+                <div class="form-error" data-error-for="agree"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg">完成注册</button>
+
+            <div class="auth-bottom">
+                已有账号？ <a href="login.html" class="auth-link">直接登录</a>
+            </div>
+        </form>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        UI.applyTheme();
+        seedData();
+        Auth.initRegister();
+    </script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>管理后台 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+    <header class="navbar" id="app-navbar"></header>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="admin-layout">
+                <aside class="admin-sidebar">
+                    <div class="sidebar-title">🛡️ 管理后台</div>
+                    <ul class="nav-list" id="admin-nav">
+                        <li><a href="javascript:void(0)" data-tab="dashboard" class="active">📊 数据概览</a></li>
+                        <li><a href="javascript:void(0)" data-tab="users">👤 用户管理</a></li>
+                        <li><a href="javascript:void(0)" data-tab="posts">📝 动态管理</a></li>
+                        <li><a href="javascript:void(0)" data-tab="comments">💬 评论管理</a></li>
+                    </ul>
+                </aside>
+                <section class="admin-content" id="admin-content"></section>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/admin.js"></script>
+    <script>UI.initPage('admin');</script>
+</body>
+</html>

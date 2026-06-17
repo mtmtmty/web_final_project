@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>发现 / 搜索 - 萌萌校园圈</title>
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/profile.css" />
+</head>
+<body>
+    <header class="navbar" id="app-navbar"></header>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="card" style="margin-bottom:16px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                    <input type="text" id="search-box" class="form-control" placeholder="搜索动态 / 同学 / 话题..." style="flex:1;min-width:240px;" />
+                    <button class="btn btn-primary" id="search-btn">搜索</button>
+                </div>
+                <div style="margin-top:12px;font-size:13px;color:var(--color-text-light);">
+                    💡 提示：输入 <code>#话题#</code> 可按话题搜索
+                </div>
+            </div>
+
+            <div class="feed-tabs" id="search-tabs">
+                <button data-tab="post" class="active">动态</button>
+                <button data-tab="user">同学</button>
+                <button data-tab="tag">话题</button>
+            </div>
+
+            <div id="search-result"></div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/search.js"></script>
+    <script>UI.initPage('search');</script>
+</body>
+</html>

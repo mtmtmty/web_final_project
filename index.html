@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>萌萌校园圈 - 校园生活交友平台</title>
+    <meta name="description" content="基于 Web 的编程课程项目 - 一个面向校园学生的轻量社交互动平台" />
+    <link rel="stylesheet" href="css/common.css" />
+    <link rel="stylesheet" href="css/home.css" />
+</head>
+<body>
+    <header class="navbar" id="app-navbar"></header>
+
+    <main class="page-wrapper">
+        <div class="container">
+            <div class="marquee">
+                <span class="marquee-content">
+                    🎉 欢迎来到萌萌校园圈！· 18 周末项目截止前请注意提交 · 期末周自习室已开放 · 校园歌手大赛开始报名
+                    · 今日日落 18:42 推荐荔园南门最佳机位 · 失物招领请认准官方账号
+                </span>
+            </div>
+
+            <div class="home-layout">
+                <!-- Left sidebar -->
+                <aside class="home-sidebar-left">
+                    <div class="sidebar-card">
+                        <div id="sidebar-user"></div>
+                        <ul class="nav-list" id="sidebar-nav">
+                            <li><a href="index.html" class="active">🏠 首页时间流</a></li>
+                            <li><a href="publish.html">✏️ 发布动态</a></li>
+                            <li><a href="messages.html">💬 私信消息</a></li>
+                            <li><a href="profile.html">👤 我的主页</a></li>
+                            <li><a href="profile.html?tab=favorites">⭐ 我的收藏</a></li>
+                            <li><a href="search.html">🔎 发现 / 搜索</a></li>
+                        </ul>
+                    </div>
+                </aside>
+
+                <!-- Main feed -->
+                <section class="home-feed">
+                    <div id="quick-publish-wrap"></div>
+
+                    <div class="feed-tabs" id="feed-tabs">
+                        <button data-mode="all" class="active">全站动态</button>
+                        <button data-mode="follow">关注动态</button>
+                        <button data-mode="hot">🔥 热门</button>
+                    </div>
+
+                    <div class="post-list" id="post-list"></div>
+                </section>
+
+                <!-- Right sidebar -->
+                <aside class="home-sidebar-right">
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">🔥 热门动态 TOP 5</div>
+                        <div class="trending-list" id="trending-list"></div>
+                    </div>
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">👋 你可能感兴趣的同学</div>
+                        <div id="suggest-users"></div>
+                    </div>
+                    <div class="sidebar-card">
+                        <div class="sidebar-title">🏷️ 热门话题</div>
+                        <div id="hot-tags"></div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="js/storage.js"></script>
+    <script src="js/seed.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/home.js"></script>
+    <script>UI.initPage('home');</script>
+</body>
+</html>
