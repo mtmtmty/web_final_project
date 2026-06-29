@@ -29,11 +29,13 @@
 
         editId = UI.getQueryParam('edit');
         if (editId) loadEditPost(editId);
+        else restoreDraft();
 
         bindEvents();
         renderImages();
         renderTags();
         renderEmojiPicker();
+        renderPreview();
     }
 
     function renderAuthor() {
@@ -60,10 +62,15 @@
     function bindEvents() {
         const ta = document.getElementById('post-content');
         const counter = document.getElementById('char-count');
+        let draftTimer;
+
         ta.addEventListener('input', () => {
             const len = ta.value.length;
             counter.textContent = len;
             counter.parentElement.classList.toggle('over', len > 500);
+            renderPreview();
+            clearTimeout(draftTimer);
+            draftTimer = setTimeout(saveDraftToStorage, 2000);
         });
 
         // image upload
@@ -82,24 +89,16 @@
         });
 
         // image link
-        document.getElementById('image-link-trigger').addEventListener('click', () => {
+        const imageLinkTrigger = document.getElementById('image-link-trigger');
+        imageLinkTrigger.addEventListener('click', e => {
+            e.stopPropagation();
             if (images.length >= 9) { UI.showToast('最多 9 张图片', 'warning'); return; }
-            const html =
-                '<div class="modal-header"><div class="modal-title">添加图片链接</div><span class="modal-close">&times;</span></div>' +
-                '<div class="form-group"><input type="text" id="img-url" class="form-control" placeholder="https://..." /></div>' +
-                '<div class="modal-footer"><button class="btn btn-ghost modal-close">取消</button>' +
-                '<button class="btn btn-primary" id="add-link">添加</button></div>';
-            const m = UI.openModal(html);
-            m.querySelector('#add-link').addEventListener('click', () => {
-                const url = m.querySelector('#img-url').value.trim();
-                if (!url) { UI.showToast('请输入链接', 'error'); return; }
-                if (!/^https?:\/\//i.test(url) && !url.startsWith('data:')) {
-                    UI.showToast('请输入合法的 http(s) 链接', 'error'); return;
-                }
-                images.push(url);
-                renderImages();
-                m.remove();
-            });
+            const popover = ensureImageLinkPopover();
+            popover.classList.toggle('show');
+            if (popover.classList.contains('show')) {
+                placeFloatingPanel(imageLinkTrigger, popover);
+                popover.querySelector('#img-url').focus();
+            }
         });
 
         // tag input
@@ -124,10 +123,20 @@
         emojiTrigger.addEventListener('click', e => {
             e.stopPropagation();
             emojiPicker.classList.toggle('show');
+            if (emojiPicker.classList.contains('show')) placeFloatingPanel(emojiTrigger, emojiPicker);
         });
         document.addEventListener('click', e => {
             if (!e.target.closest('.publish-toolbar-wrap')) emojiPicker.classList.remove('show');
+            const linkPopover = document.getElementById('image-link-popover');
+            if (linkPopover &&
+                !e.target.closest('#image-link-popover') &&
+                !e.target.closest('#image-link-trigger')) {
+                linkPopover.classList.remove('show');
+            }
         });
+
+        window.addEventListener('resize', closeFloatingPanels, { passive: true });
+        window.addEventListener('scroll', closeFloatingPanels, { passive: true });
 
         // submit / cancel
         document.getElementById('submit-btn').addEventListener('click', submit);
@@ -185,6 +194,103 @@
         });
     }
 
+    function placeFloatingPanel(trigger, panel) {
+        const rect = trigger.getBoundingClientRect();
+        const gap = 8;
+        const width = panel.offsetWidth;
+        const height = panel.offsetHeight;
+        const left = Math.max(12, Math.min(rect.left, window.innerWidth - width - 12));
+        let top = rect.bottom + gap;
+        if (top + height > window.innerHeight - 12) top = Math.max(12, rect.top - height - gap);
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+    }
+
+    function closeFloatingPanels() {
+        const emojiPicker = document.getElementById('emoji-picker');
+        const linkPopover = document.getElementById('image-link-popover');
+        if (emojiPicker) emojiPicker.classList.remove('show');
+        if (linkPopover) linkPopover.classList.remove('show');
+    }
+
+    function ensureImageLinkPopover() {
+        let popover = document.getElementById('image-link-popover');
+        if (popover) return popover;
+        popover = document.createElement('div');
+        popover.className = 'image-link-popover';
+        popover.id = 'image-link-popover';
+        popover.innerHTML =
+            '<div class="popover-title">添加图片链接</div>' +
+            '<input type="text" id="img-url" class="form-control" placeholder="https://..." />' +
+            '<div class="popover-actions">' +
+            '  <button class="btn btn-ghost btn-sm" type="button" data-close>取消</button>' +
+            '  <button class="btn btn-primary btn-sm" type="button" id="add-link">添加</button>' +
+            '</div>';
+        document.body.appendChild(popover);
+
+        popover.querySelector('[data-close]').addEventListener('click', () => popover.classList.remove('show'));
+        popover.querySelector('#img-url').addEventListener('keydown', e => {
+            if (e.key === 'Enter') addImageLink(popover);
+            if (e.key === 'Escape') popover.classList.remove('show');
+        });
+        popover.querySelector('#add-link').addEventListener('click', () => addImageLink(popover));
+        return popover;
+    }
+
+    function addImageLink(popover) {
+        const input = popover.querySelector('#img-url');
+        const url = input.value.trim();
+        if (!url) { UI.showToast('请输入链接', 'error'); return; }
+        if (!/^https?:\/\//i.test(url) && !url.startsWith('data:')) {
+            UI.showToast('请输入合法的 http(s) 链接', 'error'); return;
+        }
+        images.push(url);
+        renderImages();
+        input.value = '';
+        popover.classList.remove('show');
+    }
+
+    function restoreDraft() {
+        const draft = Store.getDraft();
+        if (!draft) return;
+        const ta = document.getElementById('post-content');
+        if (draft.content && ta.value === '') {
+            ta.value = draft.content;
+            document.getElementById('char-count').textContent = draft.content.length;
+            document.getElementById('char-count').parentElement.classList.toggle('over', draft.content.length > 500);
+        }
+        if (draft.images && draft.images.length) {
+            images = draft.images.slice();
+            renderImages();
+        }
+        if (draft.tags && draft.tags.length) {
+            tags = draft.tags.slice();
+            renderTags();
+        }
+        renderPreview();
+    }
+
+    function saveDraftToStorage() {
+        const content = document.getElementById('post-content').value;
+        if (!content && images.length === 0 && tags.length === 0) return;
+        Store.saveDraft({ content, images: images.slice(), tags: tags.slice(), savedAt: Date.now() });
+    }
+
+    function renderPreview() {
+        let previewEl = document.getElementById('publish-preview');
+        if (!previewEl) {
+            const card = document.querySelector('.publish-card');
+            previewEl = document.createElement('div');
+            previewEl.className = 'publish-preview';
+            previewEl.id = 'publish-preview';
+            previewEl.innerHTML = '<div class="publish-preview-title">📋 发布预览</div><div class="preview-content"></div>';
+            card.appendChild(previewEl);
+        }
+        const content = document.getElementById('post-content').value;
+        const previewContent = previewEl.querySelector('.preview-content');
+        previewContent.innerHTML = UI.renderContentText(content) || '';
+    }
+
     function submit() {
         const content = document.getElementById('post-content').value.trim();
         const visibility = document.getElementById('visibility-select').value;
@@ -208,6 +314,8 @@
                 authorId: me.id,
                 content, images, tags, visibility
             });
+            Store.clearDraft();
+            UI.launchConfetti();
             UI.showToast('发布成功 🎉', 'success');
             setTimeout(() => location.href = 'detail.html?id=' + p.id, 600);
         }

@@ -181,7 +181,7 @@
             '</tr></thead><tbody>' +
             posts.map(p => {
                 const u = Store.getUser(p.authorId);
-                const cnt = Store.getLikeCount(p.id) + ' 赞 / ' + Store.getCommentsByPost(p.id).length + ' 评';
+                const cnt = Store.getTotalReactions(p.id) + ' 互动 / ' + Store.getCommentsByPost(p.id).length + ' 评';
                 return '<tr>' +
                     '<td><div class="user-cell">' +
                     '<img src="' + (u ? (u.avatar || UI.defaultAvatar(u.nickname)) : UI.defaultAvatar('?')) + '" />' +
@@ -200,7 +200,7 @@
             b.addEventListener('click', async () => {
                 const ok = await UI.confirmDialog('确定删除该动态？');
                 if (!ok) return;
-                Store.deletePost(b.dataset.del);
+                if (!UI.deletePostAs(b.dataset.del, me)) return;
                 UI.showToast('已删除', 'success');
                 renderPosts();
             });

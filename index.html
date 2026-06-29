@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>萌萌校园圈 - 校园生活交友平台</title>
+    <title>栖园 Campus - 校园生活交友平台</title>
     <meta name="description" content="基于 Web 的编程课程项目 - 一个面向校园学生的轻量社交互动平台" />
     <link rel="stylesheet" href="css/common.css" />
     <link rel="stylesheet" href="css/home.css" />
@@ -15,10 +15,33 @@
         <div class="container">
             <div class="marquee">
                 <span class="marquee-content">
-                    🎉 欢迎来到萌萌校园圈！· 18 周末项目截止前请注意提交 · 期末周自习室已开放 · 校园歌手大赛开始报名
-                    · 今日日落 18:42 推荐荔园南门最佳机位 · 失物招领请认准官方账号
+                    栖园 Campus · 期末周自习室开放 · 校园歌手大赛报名中 · 荔园南门日落机位更新 · 失物招领请认准官方账号
                 </span>
             </div>
+
+            <section class="campus-pulse" aria-label="校园社区概览">
+                <div class="pulse-copy">
+                    <span class="pulse-kicker">栖园 Campus</span>
+                    <h1>安静连接校园里的真实日常</h1>
+                    <p>以清晰的信息流整理动态、话题与同学关系，让校园生活被看见，也让每一次互动保持克制而有分寸。</p>
+                    <div class="pulse-actions">
+                        <a href="publish.html" class="btn btn-primary">发布新动态</a>
+                        <a href="search.html" class="btn btn-outline">发现同学</a>
+                    </div>
+                </div>
+                <div class="pulse-board" aria-hidden="true">
+                    <div class="pulse-card pulse-card-main">
+                        <span>今日关注</span>
+                        <strong>#期末自习#</strong>
+                        <small>学习搭子、社团安排和校园提醒正在更新</small>
+                    </div>
+                    <div class="pulse-metrics">
+                        <div><strong>动态流</strong><span>公开与关注</span></div>
+                        <div><strong>同学圈</strong><span>主页与私信</span></div>
+                        <div><strong>话题榜</strong><span>搜索与推荐</span></div>
+                    </div>
+                </div>
+            </section>
 
             <div class="home-layout">
                 <!-- Left sidebar -->
@@ -26,12 +49,12 @@
                     <div class="sidebar-card">
                         <div id="sidebar-user"></div>
                         <ul class="nav-list" id="sidebar-nav">
-                            <li><a href="index.html" class="active">🏠 首页时间流</a></li>
-                            <li><a href="publish.html">✏️ 发布动态</a></li>
-                            <li><a href="messages.html">💬 私信消息</a></li>
-                            <li><a href="profile.html">👤 我的主页</a></li>
-                            <li><a href="profile.html?tab=favorites">⭐ 我的收藏</a></li>
-                            <li><a href="search.html">🔎 发现 / 搜索</a></li>
+                            <li><a href="index.html" class="active">首页时间流</a></li>
+                            <li><a href="publish.html">发布动态</a></li>
+                            <li><a href="messages.html">私信消息</a></li>
+                            <li><a href="profile.html">我的主页</a></li>
+                            <li><a href="profile.html?tab=favorites">我的收藏</a></li>
+                            <li><a href="search.html">发现 / 搜索</a></li>
                         </ul>
                     </div>
                 </aside>
@@ -43,7 +66,7 @@
                     <div class="feed-tabs" id="feed-tabs">
                         <button data-mode="all" class="active">全站动态</button>
                         <button data-mode="follow">关注动态</button>
-                        <button data-mode="hot">🔥 热门</button>
+                        <button data-mode="hot">热门</button>
                     </div>
 
                     <div class="post-list" id="post-list"></div>
@@ -52,15 +75,15 @@
                 <!-- Right sidebar -->
                 <aside class="home-sidebar-right">
                     <div class="sidebar-card">
-                        <div class="sidebar-title">🔥 热门动态 TOP 5</div>
+                        <div class="sidebar-title">热门动态 TOP 5</div>
                         <div class="trending-list" id="trending-list"></div>
                     </div>
                     <div class="sidebar-card">
-                        <div class="sidebar-title">👋 你可能感兴趣的同学</div>
+                        <div class="sidebar-title">你可能感兴趣的同学</div>
                         <div id="suggest-users"></div>
                     </div>
                     <div class="sidebar-card">
-                        <div class="sidebar-title">🏷️ 热门话题</div>
+                        <div class="sidebar-title">热门话题</div>
                         <div id="hot-tags"></div>
                     </div>
                 </aside>

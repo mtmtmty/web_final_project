@@ -104,3 +104,71 @@
 .status-pill.active { background: rgba(24, 181, 102, 0.12); color: var(--color-success); }
 .status-pill.banned { background: rgba(245, 69, 92, 0.12); color: var(--color-danger); }
 .status-pill.admin { background: rgba(108, 99, 255, 0.12); color: var(--color-secondary); }
+
+/* ====== Premium Admin Console ====== */
+.admin-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 22px;
+}
+
+.admin-sidebar,
+.admin-content {
+    padding: 20px;
+}
+
+.admin-sidebar {
+    position: sticky;
+    top: 86px;
+}
+
+.admin-stats {
+    gap: 14px;
+}
+
+.stat-card {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 10%, var(--color-card)), var(--color-card));
+}
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+    inset: auto 14px 14px auto;
+    width: 34px;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+}
+
+.stat-card .value {
+    color: var(--color-text);
+}
+
+.admin-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-table th {
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-weight: 750;
+}
+
+.admin-table th:first-child { border-top-left-radius: var(--radius-md); }
+.admin-table th:last-child { border-top-right-radius: var(--radius-md); }
+
+.admin-table tr:hover td {
+    background: color-mix(in oklch, var(--color-primary) 8%, transparent);
+}
+
+.admin-table .actions {
+    flex-wrap: wrap;
+}
+
+.status-pill {
+    border: 1px solid currentColor;
+    font-weight: 750;
+}

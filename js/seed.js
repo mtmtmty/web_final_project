@@ -6,9 +6,13 @@
     'use strict';
 
     const SEED_KEY = 'campus_social_v1::seeded';
+    const BRAND_MIGRATION_KEY = 'campus_social_v1::qiyuan_brand_migrated';
 
     function seedData() {
-        if (localStorage.getItem(SEED_KEY)) return;
+        if (localStorage.getItem(SEED_KEY)) {
+            migrateBrandData();
+            return;
+        }
 
         const adminUser = Store.createUser({
             studentId: '20231001',
@@ -71,7 +75,7 @@
         Store.createPost({
             authorId: u1.id,
             content: '#校园日常# 今天在荔园里晒到了好看的日落 🌅 同学们一起来看呀～',
-            images: [sampleImg('#ff8a8a', '#ff5277', '🌅 Sunset'), sampleImg('#a695ff', '#6c63ff', 'Campus')],
+            images: [sampleImg('#9aa69f', '#6f7d74', 'Sunset'), sampleImg('#a6a08e', '#777263', 'Campus')],
             tags: ['校园日常', '日落'],
             visibility: 'public',
             createdAt: Date.now() - 1000 * 60 * 30
@@ -115,7 +119,7 @@
 
         Store.createPost({
             authorId: adminUser.id,
-            content: '【系统公告】欢迎来到「萌萌校园圈」！这里是同学们自由分享生活的地方，请遵守社区规范，文明发言 🌸',
+            content: '【系统公告】欢迎来到「栖园 Campus」。这里用于整理校园动态、同学关系与公共提醒，请保持友善、真实与克制。',
             images: [],
             tags: ['公告'],
             visibility: 'public',
@@ -146,6 +150,26 @@
         Store.toggleFollow(u4.id, u1.id);
 
         localStorage.setItem(SEED_KEY, '1');
+        migrateBrandData();
+    }
+
+    function migrateBrandData() {
+        if (localStorage.getItem(BRAND_MIGRATION_KEY)) return;
+        try {
+            Store.getUsers().forEach(user => {
+                const isGeneratedAvatar = typeof user.avatar === 'string' && user.avatar.indexOf('data:image/svg+xml') === 0;
+                if (isGeneratedAvatar) {
+                    Store.updateUser(user.id, { avatar: UI.defaultAvatar(user.nickname || user.studentId || '栖') });
+                }
+            });
+            Store.getPosts().forEach(post => {
+                const oldBrand = '\u840c\u840c\u6821\u56ed\u5708';
+                if (post.content && post.content.indexOf(oldBrand) !== -1) {
+                    Store.updatePost(post.id, { content: post.content.replace(new RegExp(oldBrand, 'g'), '栖园 Campus') });
+                }
+            });
+            localStorage.setItem(BRAND_MIGRATION_KEY, '1');
+        } catch (e) {}
     }
 
     global.seedData = seedData;

@@ -53,10 +53,10 @@
             posts = posts.map(p => ({
                 p,
                 score: (p.tags || []).reduce((s, t) => s + (me.tags.includes(t) ? 5 : 0), 0)
-                       + Store.getLikeCount(p.id)
+                       + Store.getTotalReactions(p.id)
             })).sort((a, b) => b.score - a.score).map(x => x.p);
         } else {
-            posts.sort((a, b) => Store.getLikeCount(b.id) - Store.getLikeCount(a.id));
+            posts.sort((a, b) => Store.getTotalReactions(b.id) - Store.getTotalReactions(a.id));
         }
         posts = posts.slice(0, 12);
 
@@ -164,8 +164,6 @@
     function postCardHtml(p) {
         const author = Store.getUser(p.authorId);
         if (!author) return '';
-        const liked = me && Store.isLiked(me.id, p.id);
-        const likeCount = Store.getLikeCount(p.id);
         const commentCount = Store.getCommentsByPost(p.id).length;
         const imagesHtml = (p.images || []).length
             ? '<div class="post-images count-' + p.images.length + '">' +
@@ -184,8 +182,8 @@
             '<div class="post-meta">' + UI.timeAgo(p.createdAt) + '</div></div></div>' +
             '<div class="post-content" data-act="goto" style="cursor:pointer;">' + UI.renderContentText(p.content) + '</div>' +
             imagesHtml + tagsHtml +
-            '<div class="post-stats">' +
-            '<button class="post-stat-btn ' + (liked ? 'active' : '') + '" data-act="like"><span class="icon">' + (liked ? '❤️' : '🤍') + '</span> ' + likeCount + '</button>' +
+            UI.renderReactionBar(p, me) +
+            '<div class="post-stats-secondary">' +
             '<button class="post-stat-btn" data-act="comment"><span class="icon">💬</span> ' + commentCount + '</button>' +
             '</div></article>';
     }
@@ -200,9 +198,9 @@
             const btn = e.target.closest('[data-act]');
             if (!btn) return;
             if (btn.dataset.act === 'goto') location.href = 'detail.html?id=' + postId;
-            else if (btn.dataset.act === 'like') {
+            else if (btn.dataset.act === 'react') {
                 const u = UI.requireLogin(); if (!u) return;
-                Store.toggleLike(u.id, postId);
+                Store.toggleReaction(u.id, postId, btn.dataset.type);
                 render();
             }
             else if (btn.dataset.act === 'comment') {

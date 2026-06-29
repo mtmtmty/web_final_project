@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>私信 - 萌萌校园圈</title>
+    <title>私信 - 栖园 Campus</title>
     <link rel="stylesheet" href="css/common.css" />
     <link rel="stylesheet" href="css/home.css" />
     <style>
@@ -31,6 +31,14 @@
         .msg-input-bar { display:flex; gap:8px; padding:12px; border-top:1px solid var(--color-border); background:var(--color-card); }
         .msg-input-bar input { flex:1; padding:10px 14px; border-radius:var(--radius-pill); border:1px solid var(--color-border);
             background:var(--color-bg); outline:none; }
+        .msg-title { margin-bottom:16px; font-size:24px; letter-spacing:0; }
+        .msg-layout { border-radius:var(--radius-lg); box-shadow:var(--shadow-md); background:color-mix(in oklch, var(--color-card) 92%, transparent); }
+        .msg-side-header, .msg-main-header { background:color-mix(in oklch, var(--color-card) 72%, var(--color-surface)); font-weight:750; }
+        .msg-conv:hover, .msg-conv.active { background: color-mix(in oklch, var(--color-primary) 10%, transparent); }
+        .msg-list { background:linear-gradient(180deg, var(--color-surface), color-mix(in oklch, var(--color-surface) 72%, var(--color-card))); }
+        .msg-bubble { border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); }
+        .msg-bubble.mine { background:linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-color:transparent; }
+        .msg-input-bar input:focus { border-color:var(--color-primary); box-shadow:0 0 0 4px color-mix(in oklch, var(--color-primary) 14%, transparent); }
     </style>
 </head>
 <body>
@@ -38,7 +46,7 @@
 
     <main class="page-wrapper">
         <div class="container">
-            <h2 style="margin-bottom:16px;">💬 私信消息</h2>
+            <h2 class="msg-title">私信消息</h2>
             <div class="msg-layout">
                 <aside class="msg-side hide-mobile">
                     <div class="msg-side-header">会话列表</div>

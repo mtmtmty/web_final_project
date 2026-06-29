@@ -27,9 +27,10 @@
         const wrap = document.getElementById('quick-publish-wrap');
         const me = Store.getCurrentUser();
         if (!me) {
-            wrap.innerHTML = '<div class="card" style="margin-bottom:16px;text-align:center;">' +
-                '👋 你正以游客身份浏览，<a href="login.html" class="auth-link">登录</a> 或 ' +
-                '<a href="register.html" class="auth-link">注册</a> 后可发布动态、点赞和评论' +
+            wrap.innerHTML = '<div class="card guest-note">' +
+                '登录后可同步你的校园动态、关注同学并参与评论。' +
+                '<a href="login.html" class="auth-link">登录</a><span> / </span>' +
+                '<a href="register.html" class="auth-link">注册</a>' +
                 '</div>';
             return;
         }
@@ -89,8 +90,8 @@
             const following = me ? Store.getFollowing(me.id) : [];
             posts = posts.filter(p => following.includes(p.authorId) || (me && p.authorId === me.id));
         } else if (currentMode === 'hot') {
-            posts = posts.filter(p => Store.getLikeCount(p.id) >= HOT_THRESHOLD);
-            posts.sort((a, b) => Store.getLikeCount(b.id) - Store.getLikeCount(a.id));
+            posts = posts.filter(p => Store.getTotalReactions(p.id) >= HOT_THRESHOLD);
+            posts.sort((a, b) => Store.getTotalReactions(b.id) - Store.getTotalReactions(a.id));
         }
         if (currentMode !== 'hot') posts.sort((a, b) => b.createdAt - a.createdAt);
 
@@ -118,11 +119,11 @@
     function renderPost(p, me) {
         const author = Store.getUser(p.authorId);
         if (!author) return '';
-        const liked = me && Store.isLiked(me.id, p.id);
         const favorited = me && Store.isFavorited(me.id, p.id);
-        const likeCount = Store.getLikeCount(p.id);
+        const reactCounts = Store.getReactionCounts(p.id);
+        const totalReactions = Object.values(reactCounts).reduce((a, b) => a + b, 0);
         const commentCount = Store.getCommentsByPost(p.id).length;
-        const isHot = likeCount >= HOT_THRESHOLD;
+        const isHot = totalReactions >= HOT_THRESHOLD;
         const isNew = (Date.now() - p.createdAt) < 1000 * 60 * 60;
         const canManage = me && (me.id === p.authorId || me.role === 'admin');
 
@@ -160,9 +161,8 @@
             '</div>' +
             '<div class="post-content" data-act="goto">' + UI.renderContentText(p.content) + '</div>' +
             imagesHtml + tagsHtml +
-            '<div class="post-stats">' +
-            '<button class="post-stat-btn ' + (liked ? 'active' : '') + '" data-act="like">' +
-            '<span class="icon">' + (liked ? '❤️' : '🤍') + '</span> <span class="cnt">' + likeCount + '</span></button>' +
+            UI.renderReactionBar(p, me) +
+            '<div class="post-stats-secondary">' +
             '<button class="post-stat-btn" data-act="comment">' +
             '<span class="icon">💬</span> <span class="cnt">' + commentCount + '</span></button>' +
             '<button class="post-stat-btn ' + (favorited ? 'active' : '') + '" data-act="favorite">' +
@@ -194,9 +194,11 @@
             const act = btn.dataset.act;
 
             if (act === 'goto') { location.href = 'detail.html?id=' + postId; return; }
-            if (act === 'like') {
+            if (act === 'react') {
                 const me = UI.requireLogin(); if (!me) return;
-                Store.toggleLike(me.id, postId); renderFeed(); return;
+                const type = btn.dataset.type;
+                Store.toggleReaction(me.id, postId, type);
+                renderFeed(); return;
             }
             if (act === 'comment') { location.href = 'detail.html?id=' + postId + '#comment'; return; }
             if (act === 'favorite') {
@@ -215,9 +217,13 @@
             if (act === 'delete') {
                 const ok = await UI.confirmDialog('确定删除这条动态吗？删除后不可恢复。');
                 if (!ok) return;
-                Store.deletePost(postId);
+                const me = Store.getCurrentUser();
+                if (!UI.deletePostAs(postId, me)) return;
                 UI.showToast('动态已删除', 'success');
                 renderFeed();
+                renderSidebarUser();
+                renderTrending();
+                renderHotTags();
             }
         };
         document.addEventListener('click', e => {
@@ -242,7 +248,7 @@
         const container = document.getElementById('trending-list');
         const posts = Store.getPosts()
             .filter(p => !p.deleted && p.visibility === 'public')
-            .map(p => ({ p, score: Store.getLikeCount(p.id) * 2 + Store.getCommentsByPost(p.id).length }))
+            .map(p => ({ p, score: Store.getTotalReactions(p.id) * 2 + Store.getCommentsByPost(p.id).length }))
             .sort((a, b) => b.score - a.score).slice(0, 5);
         if (posts.length === 0) {
             container.innerHTML = '<div style="font-size:13px;color:var(--color-text-light)">暂无数据</div>';
@@ -256,7 +262,7 @@
                 '<div class="trending-info">' +
                 '<div class="trending-title">' + UI.escapeHtml(text) + '</div>' +
                 '<div class="trending-meta">' + UI.escapeHtml(author ? author.nickname : '匿名') +
-                ' · ' + Store.getLikeCount(item.p.id) + ' 赞</div></div></div>';
+                ' · ' + Store.getTotalReactions(item.p.id) + ' 互动</div></div></div>';
         }).join('');
     }
 

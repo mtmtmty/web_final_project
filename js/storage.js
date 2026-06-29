@@ -285,6 +285,59 @@
     }
 
     /* ============================================================
+     * Reactions (emoji reactions on posts)
+     * ============================================================ */
+    const REACTION_TYPES = ['like', 'laugh', 'thumbsup', 'wow', 'sad', 'fire'];
+    const REACTION_EMOJI = { like: '❤️', laugh: '😂', thumbsup: '👍', wow: '😮', sad: '😢', fire: '🔥' };
+
+    function toggleReaction(userId, postId, type) {
+        if (!REACTION_TYPES.includes(type)) return null;
+        const list = getLikes();
+        const idx = list.findIndex(l => l.userId === userId && l.postId === postId);
+        if (idx === -1) {
+            list.push({ userId, postId, type, createdAt: Date.now() });
+            saveLikes(list);
+            return type;
+        }
+        if (list[idx].type === type) {
+            list.splice(idx, 1);
+            saveLikes(list);
+            return null;
+        }
+        list[idx].type = type;
+        list[idx].createdAt = Date.now();
+        saveLikes(list);
+        return type;
+    }
+
+    function getUserReaction(userId, postId) {
+        const entry = getLikes().find(l => l.userId === userId && l.postId === postId);
+        if (!entry) return null;
+        return entry.type || 'like';
+    }
+
+    function getReactionCounts(postId) {
+        const counts = {};
+        REACTION_TYPES.forEach(t => counts[t] = 0);
+        getLikes().filter(l => l.postId === postId).forEach(l => {
+            const t = l.type || 'like';
+            counts[t] = (counts[t] || 0) + 1;
+        });
+        return counts;
+    }
+
+    function getTotalReactions(postId) {
+        return getLikes().filter(l => l.postId === postId).length;
+    }
+
+    /* ============================================================
+     * Drafts
+     * ============================================================ */
+    function getDraft() { return read('draft', null); }
+    function saveDraft(draft) { write('draft', draft); }
+    function clearDraft() { localStorage.removeItem(NS + 'draft'); }
+
+    /* ============================================================
      * View log (recommendation)
      * ============================================================ */
     function getViewLog() { return read('viewLog', []); }
@@ -313,7 +366,7 @@
      * Settings
      * ============================================================ */
     function getSettings() {
-        return read('settings', { theme: 'light' });
+        return read('settings', { theme: 'light', background: 'fluid' });
     }
     function setSettings(s) { write('settings', s); }
 
@@ -330,12 +383,16 @@
         getComments, getCommentsByPost, createComment, deleteComment,
         // likes
         getLikes, isLiked, toggleLike, getLikeCount,
+        // reactions
+        toggleReaction, getUserReaction, getReactionCounts, getTotalReactions, REACTION_TYPES, REACTION_EMOJI,
         // follows
         getFollows, isFollowing, toggleFollow, getFollowing, getFollowers,
         // favorites
         getFavorites, isFavorited, toggleFavorite, getFavoritePostIds,
         // messages
         getMessages, sendMessage, getConversation,
+        // drafts
+        getDraft, saveDraft, clearDraft,
         // view log
         getViewLog, logView,
         // session

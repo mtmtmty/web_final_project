@@ -114,8 +114,6 @@
     }
 
     function postCardHtml(p) {
-        const liked = me && Store.isLiked(me.id, p.id);
-        const likeCount = Store.getLikeCount(p.id);
         const commentCount = Store.getCommentsByPost(p.id).length;
 
         const imagesHtml = (p.images || []).length
@@ -136,9 +134,11 @@
             '</div></div>' +
             '<div class="post-content" data-act="goto" style="cursor:pointer;">' + UI.renderContentText(p.content) + '</div>' +
             imagesHtml + tagsHtml +
-            '<div class="post-stats">' +
-            '<button class="post-stat-btn ' + (liked ? 'active' : '') + '" data-act="like"><span class="icon">' + (liked ? '❤️' : '🤍') + '</span> ' + likeCount + '</button>' +
+            UI.renderReactionBar(p, me) +
+            '<div class="post-stats-secondary">' +
             '<button class="post-stat-btn" data-act="comment"><span class="icon">💬</span> ' + commentCount + '</button>' +
+            (me && me.role === 'admin'
+                ? '<button class="post-stat-btn" data-act="delete"><span class="icon">🗑️</span> 删除</button>' : '') +
             '</div></article>';
     }
 
@@ -152,7 +152,7 @@
             return;
         }
         wrap.innerHTML = '<div class="post-list">' + list.map(postCardHtml).join('') + '</div>';
-        wrap.onclick = e => {
+        wrap.onclick = async e => {
             const img = e.target.closest('img[data-lightbox]');
             if (img) { UI.showLightbox(img.dataset.lightbox); return; }
             const article = e.target.closest('.post');
@@ -161,12 +161,19 @@
             const btn = e.target.closest('[data-act]');
             if (!btn) return;
             if (btn.dataset.act === 'goto') location.href = 'detail.html?id=' + postId;
-            else if (btn.dataset.act === 'like') {
+            else if (btn.dataset.act === 'react') {
                 const u = UI.requireLogin(); if (!u) return;
-                Store.toggleLike(u.id, postId);
+                Store.toggleReaction(u.id, postId, btn.dataset.type);
                 renderPosts();
             } else if (btn.dataset.act === 'comment') {
                 location.href = 'detail.html?id=' + postId + '#comment';
+            } else if (btn.dataset.act === 'delete') {
+                const ok = await UI.confirmDialog('确定删除该动态？删除后不可恢复。');
+                if (!ok) return;
+                if (!UI.deletePostAs(postId, me)) return;
+                UI.showToast('动态已删除', 'success');
+                renderHeader();
+                renderPosts();
             }
         };
     }

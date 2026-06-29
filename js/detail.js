@@ -47,9 +47,7 @@
 
     function renderDetail() {
         const author = Store.getUser(post.authorId);
-        const liked = me && Store.isLiked(me.id, post.id);
         const favorited = me && Store.isFavorited(me.id, post.id);
-        const likeCount = Store.getLikeCount(post.id);
         const isFollowing = me && me.id !== author.id && Store.isFollowing(me.id, author.id);
         const canManage = me && (me.id === post.authorId || me.role === 'admin');
 
@@ -83,9 +81,8 @@
             '  </div>' +
             '  <div class="detail-content">' + UI.renderContentText(post.content) + '</div>' +
             imagesHtml + tagsHtml +
-            '  <div class="detail-actions">' +
-            '    <button class="post-stat-btn ' + (liked ? 'active' : '') + '" id="like-btn">' +
-            '      <span class="icon">' + (liked ? '❤️' : '🤍') + '</span> 点赞 <span class="cnt">' + likeCount + '</span></button>' +
+            '  <div class="detail-actions" id="detail-reactions"></div>' +
+            '  <div class="detail-actions-secondary">' +
             '    <button class="post-stat-btn ' + (favorited ? 'active' : '') + '" id="favorite-btn">' +
             '      <span class="icon">' + (favorited ? '⭐' : '☆') + '</span> 收藏</button>' +
             '    <button class="post-stat-btn" id="share-btn">🔗 转发</button>' +
@@ -117,12 +114,19 @@
             if (img) UI.showLightbox(img.dataset.lightbox);
         });
 
-        const like = document.getElementById('like-btn');
-        if (like) like.addEventListener('click', () => {
-            const u = UI.requireLogin(); if (!u) return;
-            Store.toggleLike(u.id, postId);
-            renderDetail();
-        });
+        // Render reaction buttons
+        const reactionContainer = document.getElementById('detail-reactions');
+        if (reactionContainer) {
+            reactionContainer.innerHTML = UI.renderReactionBar(post, me);
+            reactionContainer.addEventListener('click', e => {
+                const btn = e.target.closest('.reaction-btn');
+                if (!btn) return;
+                const u = UI.requireLogin(); if (!u) return;
+                const type = btn.dataset.type;
+                Store.toggleReaction(u.id, postId, type);
+                renderDetail();
+            });
+        }
 
         const fav = document.getElementById('favorite-btn');
         if (fav) fav.addEventListener('click', () => {
@@ -158,7 +162,8 @@
         if (del) del.addEventListener('click', async () => {
             const ok = await UI.confirmDialog('确定删除这条动态？删除后不可恢复。');
             if (!ok) return;
-            Store.deletePost(postId);
+            const u = Store.getCurrentUser();
+            if (!UI.deletePostAs(postId, u)) return;
             UI.showToast('动态已删除', 'success');
             setTimeout(() => location.href = 'index.html', 600);
         });
@@ -179,6 +184,7 @@
             '  <div class="input-area">' +
             '    <textarea class="comment-input" id="ct-input" placeholder="说点什么吧..." maxlength="200"></textarea>' +
             '    <div id="ct-image-preview" style="margin-top:6px;"></div>' +
+            '    <div class="comment-emoji-picker" id="ct-emoji-picker"></div>' +
             '    <div class="comment-tools">' +
             '      <div class="comment-tools-left">' +
             '        <button id="ct-emoji">😀</button>' +
@@ -191,12 +197,27 @@
             '</div>';
 
         // emoji popup (reuse same emojis)
-        const emojis = ['😀','😂','😍','😎','🥺','😡','👍','❤️','🔥','🎉','✨','🌸'];
-        document.getElementById('ct-emoji').addEventListener('click', () => {
-            const e = emojis[Math.floor(Math.random() * emojis.length)];
+        const emojis = ['😀','😁','😂','🤣','😊','😍','🥰','😎','🥺','😭','😡','👍','👏','🙌','❤️','🔥','🎉','✨','🌸','🍀','☕','🐱','🐶','🐼'];
+        const emojiBtn = document.getElementById('ct-emoji');
+        const emojiPicker = document.getElementById('ct-emoji-picker');
+        emojiPicker.innerHTML = emojis.map(e => '<span>' + e + '</span>').join('');
+        emojiBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            emojiPicker.classList.toggle('show');
+        });
+        emojiPicker.addEventListener('click', e => {
+            if (e.target.tagName !== 'SPAN') return;
             const ta = document.getElementById('ct-input');
-            ta.value += e;
+            const cursor = ta.selectionStart || ta.value.length;
+            ta.value = ta.value.slice(0, cursor) + e.target.textContent + ta.value.slice(cursor);
             ta.focus();
+            ta.selectionStart = ta.selectionEnd = cursor + e.target.textContent.length;
+            emojiPicker.classList.remove('show');
+        });
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#ct-emoji') && !e.target.closest('#ct-emoji-picker')) {
+                emojiPicker.classList.remove('show');
+            }
         });
 
         document.getElementById('ct-image').addEventListener('click', () => document.getElementById('ct-file').click());
@@ -278,7 +299,7 @@
                 '<img src="' + cover + '" />' +
                 '<div class="text">' +
                 '<div class="title">' + UI.escapeHtml((p.content || '(图片动态)').slice(0, 60)) + '</div>' +
-                '<div class="meta">' + UI.timeAgo(p.createdAt) + ' · ' + Store.getLikeCount(p.id) + ' 赞</div>' +
+                '<div class="meta">' + UI.timeAgo(p.createdAt) + ' · ' + Store.getTotalReactions(p.id) + ' 互动</div>' +
                 '</div></div>';
         }).join('');
     }
@@ -287,7 +308,7 @@
         const box = document.getElementById('hot-recommend');
         const list = Store.getPosts()
             .filter(p => !p.deleted && p.id !== post.id && p.visibility === 'public')
-            .sort((a, b) => Store.getLikeCount(b.id) - Store.getLikeCount(a.id))
+            .sort((a, b) => Store.getTotalReactions(b.id) - Store.getTotalReactions(a.id))
             .slice(0, 4);
         if (list.length === 0) { box.innerHTML = ''; return; }
         box.innerHTML = list.map(p => {
@@ -296,7 +317,7 @@
                 '<img src="' + cover + '" />' +
                 '<div class="text">' +
                 '<div class="title">' + UI.escapeHtml((p.content || '(图片动态)').slice(0, 60)) + '</div>' +
-                '<div class="meta">' + Store.getLikeCount(p.id) + ' 赞 · ' + Store.getCommentsByPost(p.id).length + ' 评论</div>' +
+                '<div class="meta">' + Store.getTotalReactions(p.id) + ' 互动 · ' + Store.getCommentsByPost(p.id).length + ' 评论</div>' +
                 '</div></div>';
         }).join('');
     }

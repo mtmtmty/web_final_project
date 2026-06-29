@@ -58,7 +58,8 @@
         if (pwdToggle) {
             pwdToggle.addEventListener('click', () => {
                 pwd.type = pwd.type === 'password' ? 'text' : 'password';
-                pwdToggle.textContent = pwd.type === 'password' ? '👁️' : '🙈';
+                pwdToggle.dataset.visible = pwd.type === 'text' ? 'true' : 'false';
+                pwdToggle.textContent = '';
             });
         }
 
@@ -190,7 +191,8 @@
                 const id = t.dataset.toggle;
                 const input = document.getElementById(id);
                 input.type = input.type === 'password' ? 'text' : 'password';
-                t.textContent = input.type === 'password' ? '👁️' : '🙈';
+                t.dataset.visible = input.type === 'text' ? 'true' : 'false';
+                t.textContent = '';
             });
         });
 

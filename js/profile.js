@@ -95,8 +95,6 @@
     }
 
     function postCardHtml(p) {
-        const liked = Store.isLiked(me.id, p.id);
-        const likeCount = Store.getLikeCount(p.id);
         const commentCount = Store.getCommentsByPost(p.id).length;
         const author = Store.getUser(p.authorId);
         if (!author) return '';
@@ -119,8 +117,8 @@
             '</div></div>' +
             '<div class="post-content" data-act="goto" style="cursor:pointer;">' + UI.renderContentText(p.content) + '</div>' +
             imagesHtml + tagsHtml +
-            '<div class="post-stats">' +
-            '<button class="post-stat-btn ' + (liked ? 'active' : '') + '" data-act="like"><span class="icon">' + (liked ? '❤️' : '🤍') + '</span> ' + likeCount + '</button>' +
+            UI.renderReactionBar(p, me) +
+            '<div class="post-stats-secondary">' +
             '<button class="post-stat-btn" data-act="comment"><span class="icon">💬</span> ' + commentCount + '</button>' +
             (p.authorId === me.id || me.role === 'admin'
                 ? '<button class="post-stat-btn" data-act="edit"><span class="icon">✏️</span> 编辑</button>' +
@@ -139,13 +137,13 @@
             if (!btn) return;
             const act = btn.dataset.act;
             if (act === 'goto') location.href = 'detail.html?id=' + postId;
-            else if (act === 'like') { Store.toggleLike(me.id, postId); renderTabContent(); }
+            else if (act === 'react') { Store.toggleReaction(me.id, postId, btn.dataset.type); renderTabContent(); }
             else if (act === 'comment') location.href = 'detail.html?id=' + postId + '#comment';
             else if (act === 'edit') location.href = 'publish.html?edit=' + postId;
             else if (act === 'delete') {
                 const ok = await UI.confirmDialog('确定删除该动态？');
                 if (!ok) return;
-                Store.deletePost(postId);
+                if (!UI.deletePostAs(postId, me)) return;
                 UI.showToast('已删除', 'success');
                 renderHeader();
                 renderTabContent();
@@ -260,6 +258,14 @@
             '<textarea class="form-control" id="ep-bio" maxlength="80">' + UI.escapeHtml(me.bio || '') + '</textarea></div>' +
             '<div class="form-group"><label class="form-label">兴趣标签（最多 6 个）</label>' +
             '<div class="tag-selector" id="ep-tags"></div></div>' +
+            '<div class="form-group"><label class="form-label">平台动态背景</label>' +
+            '<div class="background-selector">' +
+            '  <button type="button" class="bg-option" data-bg="fluid"><span class="bg-preview fluid"></span><strong>流体渐变</strong><small>当前默认动效</small></button>' +
+            '  <button type="button" class="bg-option" data-bg="aurora"><span class="bg-preview aurora"></span><strong>极光流动</strong><small>柔和彩带动画</small></button>' +
+            '  <button type="button" class="bg-option" data-bg="bubbles"><span class="bg-preview bubbles"></span><strong>气泡漂浮</strong><small>轻快校园感</small></button>' +
+            '  <button type="button" class="bg-option" data-bg="grid"><span class="bg-preview grid"></span><strong>星点网格</strong><small>科技感背景</small></button>' +
+            '  <button type="button" class="bg-option" data-bg="minimal"><span class="bg-preview minimal"></span><strong>简洁背景</strong><small>安静纯净</small></button>' +
+            '</div></div>' +
             '<div class="form-group"><label class="form-label">修改密码（留空则不修改）</label>' +
             '<input class="form-control" type="password" id="ep-pwd" placeholder="新密码"/></div>' +
             '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
@@ -295,6 +301,19 @@
         });
 
         document.getElementById('ep-cancel').addEventListener('click', () => switchTab('posts'));
+
+        const bgOptions = document.querySelectorAll('.bg-option');
+        function paintBackgroundOptions() {
+            const active = UI.getBackgroundMode();
+            bgOptions.forEach(btn => btn.classList.toggle('selected', btn.dataset.bg === active));
+        }
+        bgOptions.forEach(btn => {
+            btn.addEventListener('click', () => {
+                UI.setBackgroundMode(btn.dataset.bg);
+                paintBackgroundOptions();
+            });
+        });
+        paintBackgroundOptions();
 
         document.getElementById('ep-save').addEventListener('click', () => {
             const nickname = document.getElementById('ep-nick').value.trim();

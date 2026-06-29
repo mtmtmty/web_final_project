@@ -10,7 +10,7 @@
 
 .profile-cover {
     height: 180px;
-    background: linear-gradient(135deg, #ff5277, #6c63ff);
+    background: linear-gradient(135deg, #2f3935, #6f7d74);
     position: relative;
 }
 
@@ -201,3 +201,147 @@
 .user-list-item .name { font-weight: 600; font-size: 14px; }
 .user-list-item .bio { font-size: 12px; color: var(--color-text-light); margin-top: 2px;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ====== Premium Profile Surface ====== */
+.profile-header {
+    overflow: hidden;
+}
+
+.profile-cover {
+    background:
+        linear-gradient(125deg, var(--color-text), color-mix(in oklch, var(--color-secondary) 56%, var(--color-text)) 54%, var(--color-primary));
+}
+
+.profile-cover::after {
+    background:
+        linear-gradient(110deg, transparent 0 42%, rgba(255, 255, 255, 0.18) 42% 43%, transparent 43% 100%),
+        linear-gradient(110deg, transparent 0 70%, rgba(255, 255, 255, 0.12) 70% 71%, transparent 71% 100%);
+}
+
+.profile-avatar {
+    box-shadow: var(--shadow-md);
+}
+
+.profile-name {
+    font-size: 24px;
+    letter-spacing: 0;
+}
+
+.profile-stats {
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.profile-stat-item {
+    min-width: 92px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: color-mix(in oklch, var(--color-card) 68%, transparent);
+}
+
+.profile-tabs {
+    border-radius: var(--radius-lg);
+}
+
+.profile-tabs button {
+    border-radius: 11px;
+    font-weight: 750;
+}
+
+.profile-tabs button.active {
+    background: var(--color-text);
+    color: #fff;
+}
+
+.photo-wall {
+    gap: 10px;
+}
+
+.photo-wall img {
+    border-radius: var(--radius-md);
+}
+
+.user-list-item {
+    background: color-mix(in oklch, var(--color-card) 78%, transparent);
+    transition: transform var(--transition), border-color var(--transition);
+}
+
+.user-list-item:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklch, var(--color-primary) 36%, var(--color-border));
+}
+
+/* ====== Platform Background Picker ====== */
+.background-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 10px;
+}
+
+.bg-option {
+    display: grid;
+    gap: 7px;
+    text-align: left;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-card);
+    transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.bg-option:hover,
+.bg-option.selected {
+    transform: translateY(-1px);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-primary) 14%, transparent);
+}
+
+.bg-option strong {
+    font-size: 13px;
+}
+
+.bg-option small {
+    color: var(--color-text-light);
+    font-size: 11px;
+}
+
+.bg-preview {
+    height: 56px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid color-mix(in oklch, var(--color-border) 80%, transparent);
+}
+
+.bg-preview.fluid {
+    background:
+        radial-gradient(circle at 22% 20%, rgba(236, 110, 72, 0.62), transparent 34%),
+        radial-gradient(circle at 76% 70%, rgba(173, 180, 70, 0.58), transparent 38%),
+        #f4d7a8;
+}
+
+.bg-preview.aurora {
+    background:
+        linear-gradient(115deg, transparent 6%, rgba(93, 238, 184, 0.62) 34%, rgba(169, 117, 255, 0.62) 58%, transparent 82%),
+        #0a1930;
+}
+
+.bg-preview.bubbles {
+    background:
+        radial-gradient(circle at 18% 72%, rgba(79, 167, 232, 0.58) 0 13%, transparent 14%),
+        radial-gradient(circle at 78% 24%, rgba(255, 172, 105, 0.6) 0 17%, transparent 18%),
+        linear-gradient(180deg, #eaf7ff, #fff2df);
+}
+
+.bg-preview.grid {
+    background:
+        linear-gradient(rgba(153, 183, 255, 0.28) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(153, 183, 255, 0.28) 1px, transparent 1px),
+        #09101f;
+    background-size: 18px 18px;
+}
+
+.bg-preview.minimal {
+    background:
+        linear-gradient(180deg, oklch(0.982 0.004 106), oklch(0.965 0.006 106));
+}

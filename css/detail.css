@@ -131,6 +131,42 @@
 
 .comment-tools-left button:hover { color: var(--color-primary); }
 
+.comment-emoji-picker {
+    position: absolute;
+    left: 0;
+    bottom: 40px;
+    z-index: 20;
+    display: none;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    width: 288px;
+    max-width: min(288px, calc(100vw - 90px));
+    max-height: 190px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-card);
+    box-shadow: var(--shadow-lg);
+}
+
+.comment-emoji-picker.show {
+    display: grid;
+}
+
+.comment-emoji-picker span {
+    padding: 4px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1.35;
+    text-align: center;
+}
+
+.comment-emoji-picker span:hover {
+    background: var(--color-primary-soft);
+}
+
 .comment-list {
     display: flex;
     flex-direction: column;
@@ -208,4 +244,78 @@
     font-size: 11px;
     color: var(--color-text-light);
     margin-top: 4px;
+}
+
+/* ====== Premium Detail Reading ====== */
+.detail-container {
+    gap: 24px;
+}
+
+.detail-main {
+    padding: 28px;
+}
+
+.detail-header img,
+.comment-item img,
+.comment-input-wrap img {
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-card) 92%, transparent);
+}
+
+.detail-content {
+    font-size: 17px;
+    line-height: 1.85;
+    text-wrap: pretty;
+}
+
+.detail-images {
+    gap: 10px;
+}
+
+.detail-images img,
+.related-post img,
+.comment-image {
+    transition: transform var(--transition), filter var(--transition);
+}
+
+.detail-images img:hover,
+.related-post:hover img {
+    transform: scale(1.015);
+    filter: saturate(1.08);
+}
+
+.detail-actions {
+    border-color: color-mix(in oklch, var(--color-border) 82%, transparent);
+    flex-wrap: wrap;
+}
+
+.detail-actions-secondary {
+    display: flex;
+    gap: 12px;
+    padding: 8px 0;
+    margin-bottom: 14px;
+    border-bottom: 1px solid color-mix(in oklch, var(--color-border) 60%, transparent);
+}
+
+.comments-title {
+    font-size: 18px;
+}
+
+.comment-input {
+    min-height: 76px;
+    border-radius: var(--radius-lg);
+}
+
+.comment-item {
+    padding: 14px 0;
+}
+
+.related-post {
+    padding: 10px;
+    border-radius: var(--radius-md);
+    border-bottom: none;
+    transition: background var(--transition);
+}
+
+.related-post:hover {
+    background: color-mix(in oklch, var(--color-primary) 9%, transparent);
 }
